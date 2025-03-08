@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum ROLE {
+    ADMIN
+    TEACHER
+}
+
+model User {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    password  String
+    role      ROLE
+    name      String
+    code      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    reports Report[]
+}
+
+model School {
+    id        String   @id @default(cuid())
+    name      String
+    code      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    classes Class[]
+}
+
+model Class {
+    id        String   @id @default(cuid())
+    name      String
+    code      String
+    school    School   @relation(fields: [schoolId], references: [id])
+    schoolId  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    reports Report[]
+}
+
+model LessonPlan {
+    id        String   @id @default(cuid())
+    title     String
+    content   String
+    subject   Subject  @relation(fields: [subjectId], references: [id])
+    subjectId String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Subject {
+    id        String   @id @default(cuid())
+    name      String
+    code      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    plans LessonPlan[]
+    reports     Report[]
+}
+
+model Report {
+    id        String   @id @default(cuid())
+    class     Class    @relation(fields: [classId], references: [id])
+    classId   String
+    teacher   User     @relation(fields: [teacherId], references: [id])
+    teacherId String
+    subject   Subject  @relation(fields: [subjectId], references: [id])
+    subjectId String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
