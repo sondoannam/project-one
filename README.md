@@ -1,4 +1,4 @@
-- Trang đầu tiên theo ý định em muốn hiển thị giao diện của web, có nút đăng nhập ở góc phải trên cùng của màn hình như chưa có hình cụ thể nên chỉ để nút đăng nhập tượng trưng. Khi bấm đăng nhập thì nhảy ra giao diện trang login
+- Trang đầu tiên theo ý định em muốn hiển thị giao diện của web, có nút đăng nhập ở góc phải trên cùng của màn hình nhưng chưa design cụ thể nên chỉ để nút đăng nhập tượng trưng. Khi bấm đăng nhập thì nhảy ra giao diện trang login
 
 - Trang login:
     Em tạo trang Login cơ bản, chỉ cần đáp ứng điều kiện của email và mật khẩu là sẽ vào được chứ chưa cấp tài khoản
