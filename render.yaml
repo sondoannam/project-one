@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: project-one-api
+    runtime: node
+    plan: free
+    # Root directory of the monorepo
+    rootDir: apps/server
+    # Use relative path for the server directory
+    buildCommand: pnpm install && pnpm turbo build --filter=server...
+    # Use relative path to start the server
+    startCommand: node apps/server/dist/main.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: FRONTEND_URL
+        sync: false
