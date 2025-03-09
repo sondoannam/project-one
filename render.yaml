@@ -3,11 +3,11 @@ services:
     name: project-one-api
     runtime: node
     plan: free
-    # Root directory of the monorepo
-    rootDir: apps/server
-    # Use relative path for the server directory
+    # Change rootDir to the monorepo root instead of the server directory
+    rootDir: .
+    # Build only the server
     buildCommand: pnpm install && pnpm turbo build --filter=server...
-    # Use relative path to start the server
+    # Update start command to use the correct path
     startCommand: node apps/server/dist/main.js
     envVars:
       - key: NODE_ENV
@@ -18,3 +18,6 @@ services:
         sync: false
       - key: DATABASE_URL
         sync: false
+      # Add explicit Prisma schema path
+      - key: PRISMA_SCHEMA_PATH
+        value: apps/server/prisma/schema.prisma
