@@ -108,6 +108,30 @@ export class UserService {
     return new User(user as any);
   }
 
+  async findByEmailOrThrow(email: string) {
+    const user = await this.databaseService.user.findFirst({
+      where: {
+        email,
+        is_deleted: false,
+      },
+      omit: {
+        password: true,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'user_not_found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return new User(user);
+  }
+
   async changePassword(userId: string, oldPassword: string, newPassword: string) {
     const user = await this.databaseService.user.findFirst({
       where: {
@@ -189,7 +213,7 @@ export class UserService {
     return new User(updatedUser);
   }
 
-  async deleteUser(userId: string) {
+  async softDelete(userId: string) {
     const user = await this.databaseService.user.findFirst({
       where: {
         id: userId,
