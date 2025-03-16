@@ -41,7 +41,7 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginDto,
     @Ip() ip: string,
-    @Headers('user-agent') userAgent: string,
+    @Headers('user-agent') userAgent?: string,
   ): Promise<LoginResponseDto> {
     return this.authService.authenticate(loginDto, ip, userAgent);
   }

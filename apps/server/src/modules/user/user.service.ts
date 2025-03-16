@@ -16,8 +16,8 @@ import { PaginatedResponse } from 'libs/types';
 export class UserService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  isUserExisted = async (code: string, phone?: string) => {
-    if (!code && !phone) {
+  isUserExisted = async (code: string, email?: string, phone?: string) => {
+    if (!code && !phone && !email) {
       return false;
     }
 
@@ -26,6 +26,9 @@ export class UserService {
         OR: [
           {
             code,
+          },
+          {
+            email,
           },
           {
             phone,
@@ -52,7 +55,11 @@ export class UserService {
       );
     }
 
-    const existedUser = await this.isUserExisted(createUserDto.code, createUserDto.phone);
+    const existedUser = await this.isUserExisted(
+      createUserDto.code,
+      createUserDto.email,
+      createUserDto.phone,
+    );
 
     if (existedUser) {
       throw new HttpException(
