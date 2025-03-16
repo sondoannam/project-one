@@ -19,16 +19,20 @@ enum ROLE {
 }
 
 model User {
-    id        String   @id @default(cuid())
-    email     String   @unique
-    password  String
-    role      ROLE
-    name      String
-    code      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id         String    @id @default(cuid())
+    email      String?   @unique
+    password   String
+    role       ROLE
+    name       String
+    phone      String?
+    code       String
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
+    is_deleted Boolean   @default(false)
+    deletedAt  DateTime?
 
-    reports Report[]
+    reports      Report[]
+    RefreshToken RefreshToken[]
 }
 
 model School {
@@ -70,8 +74,8 @@ model Subject {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    plans LessonPlan[]
-    reports     Report[]
+    plans   LessonPlan[]
+    reports Report[]
 }
 
 model Report {
@@ -84,4 +88,22 @@ model Report {
     subjectId String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model RefreshToken {
+    id        String   @id @default(cuid())
+    token     String   @unique
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    device    String? // Store device info
+    ip        String? // Store IP address
+    isRevoked Boolean  @default(false)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+    @@index([expiresAt])
+    @@index([isRevoked])
+    @@index([createdAt])
 }
