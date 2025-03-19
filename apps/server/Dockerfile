@@ -14,8 +14,7 @@ COPY --from=pruner /app/out/full .
 COPY --from=pruner /app/turbo.json ./turbo.json
 RUN npm install -g pnpm
 
-# Install dependencies without running postinstall script yet
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm install --frozen-lockfile
 
 FROM node:lts-alpine AS builder
 WORKDIR /app
@@ -29,7 +28,9 @@ RUN npm install -g pnpm
 RUN ls -la apps/server/prisma/
 
 # Generate Prisma client with absolute path
-RUN cd apps/server && npx prisma generate --schema=/app/apps/server/prisma/schema.prisma
+WORKDIR /app/apps/server
+RUN pnpx prisma generate --schema=/app/apps/server/prisma/schema.prisma
+WORKDIR /app
 
 # Then run the build
 RUN pnpm run build
@@ -37,27 +38,7 @@ RUN pnpm run build
 FROM node:lts-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-
-# Install build dependencies for bcrypt
-RUN apk add --no-cache python3 make g++
-
-# Copy package.json files and other necessary files
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=builder /app/apps/server/package.json ./apps/server/package.json
-COPY --from=builder /app/apps/server/dist ./apps/server/dist
-COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
-
-# Install Prisma CLI globally
-RUN npm install -g pnpm prisma
-
-# Install production dependencies only, skip postinstall scripts
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
-
-# Generate Prisma client explicitly
-RUN cd apps/server && \
-    npx prisma generate --schema=./prisma/schema.prisma
+COPY --from=builder /app/ .
 
 # DATABASE_URL will be provided by Render at runtime
 CMD ["node", "apps/server/dist/src/main"]
