@@ -21,3 +21,6 @@ services:
       # Add explicit Prisma schema path
       - key: PRISMA_SCHEMA_PATH
         value: apps/server/prisma/schema.prisma
+      # Add this to tell bcrypt what platform we're running on
+      - key: npm_config_target_platform
+        value: linux

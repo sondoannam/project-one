@@ -37,7 +37,23 @@ RUN pnpm run build
 FROM node:lts-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/ .
+
+# Install build dependencies for bcrypt
+RUN apk add --no-cache python3 make g++
+
+# Copy package.json files and other necessary files
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder /app/apps/server/package.json ./apps/server/package.json
+COPY --from=builder /app/apps/server/dist ./apps/server/dist
+COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
+
+# Install production dependencies only and rebuild bcrypt
+RUN npm install -g pnpm && \
+    pnpm install --prod --frozen-lockfile && \
+    cd apps/server && \
+    npx prisma generate --schema=./prisma/schema.prisma
 
 # DATABASE_URL will be provided by Render at runtime
 CMD ["node", "apps/server/dist/src/main"]
