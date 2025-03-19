@@ -49,10 +49,14 @@ COPY --from=builder /app/apps/server/package.json ./apps/server/package.json
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
 
-# Install production dependencies only and rebuild bcrypt
-RUN npm install -g pnpm && \
-    pnpm install --prod --frozen-lockfile && \
-    cd apps/server && \
+# Install Prisma CLI globally
+RUN npm install -g pnpm prisma
+
+# Install production dependencies only, skip postinstall scripts
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+
+# Generate Prisma client explicitly
+RUN cd apps/server && \
     npx prisma generate --schema=./prisma/schema.prisma
 
 # DATABASE_URL will be provided by Render at runtime
