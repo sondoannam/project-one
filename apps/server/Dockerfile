@@ -40,4 +40,4 @@ ENV NODE_ENV=production
 COPY --from=builder /app/ .
 
 # DATABASE_URL will be provided by Render at runtime
-CMD ["node", "apps/server/dist/main"]
+CMD ["node", "apps/server/dist/src/main"]
