@@ -19,6 +19,9 @@
     "seo",
     "images",
     "scripts",
-    "auth"
+    "auth",
+    "subject",
+    "school",
+    "teacher"
   ]
 }

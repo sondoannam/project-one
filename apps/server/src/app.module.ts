@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { JwtAuthGuard } from './modules/auth/guards';
 import { AdminModule } from './modules/admin/admin.module';
+import { SubjectModule } from './modules/subject/subject.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AdminModule } from './modules/admin/admin.module';
     AuthModule,
     UserModule,
     AdminModule,
+    SubjectModule,
   ],
   controllers: [AppController],
   providers: [
